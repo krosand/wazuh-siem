@@ -7,7 +7,6 @@ services:
       - "1883:1883"
       - "8883:8883"
       - "9001:9001"
-    user: "${UID}:${GID}"
     environment:
       - USER_UID=1000
       - USER_GID=1000
