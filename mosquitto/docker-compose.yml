@@ -1,47 +1,26 @@
 version: '3'
 services:
   mosquitto-prod:
-    image: eclipse-mosquitto:2.0.18
+    image: krosand/mosquitto-wazuh:latest
     container_name: mosquitto-prod
     ports:
       - "1883:1883"
       - "8883:8883"
       - "9001:9001"
     environment:
-      - USER_UID=1000
-      - USER_GID=1000
+      - WAZUH_MANAGER='172.18.0.4'
+      - WAZUH_AGENT_GROUP='default'
+      - WAZUH_AGENT_NAME='mosquitto'
     volumes:
       - /mnt/containers/mosquitto/config:/mosquitto/config
       - /mnt/containers/mosquitto/data:/mosquitto/data
       - /mnt/containers/mosquitto/log:/mosquitto/log
-      #- /mnt/containers/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
-      #- /mnt/containers/mosquitto/data/passwords.txt:/mosquitto/data/passwords.txt
       - /etc/timezone:/etc/timezone
       - /etc/localtime:/etc/localtime
     restart: unless-stopped
     networks:
       - single-node_default
 
-  wazuh-agent:
-    image: debian:latest
-    container_name: wazuh-agent
-    environment:
-      - WAZUH_MANAGER='172.18.0.4'
-      - WAZUH_AGENT_GROUP='default'
-      - WAZUH_AGENT_NAME='mosquitto'
-    volumes:
-      - wazuh-agent-data:/var/ossec/data
-    networks:
-      - single-node_default
-    command: bash -c "apt-get update && apt-get install -y wget sudo lsb-release && \
-      wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.8.0-1_amd64.deb && \
-      sudo WAZUH_MANAGER='172.18.0.4' WAZUH_AGENT_GROUP='default' WAZUH_AGENT_NAME='mosquitto' dpkg -i ./wazuh-agent_4.8.0-1_amd64.deb && \
-      /var/ossec/bin/wazuh-control start && \
-      tail -f /var/ossec/logs/ossec.log"
-
 networks:
   single-node_default:
     external: true
-
-volumes:
-  wazuh-agent-data:
