@@ -1,0 +1,43 @@
+version: '3'
+services:
+  mosquitto-prod:
+    image: eclipse-mosquitto:2.0.18
+    container_name: mosquitto-prod
+    ports:
+      - "1883:1883"
+      - "8883:8883"
+      - "9001:9001"
+    user: "${UID}:${GID}"
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    volumes:
+      - /mnt/containers/mosquitto/config:/mosquitto/config
+      - /mnt/containers/mosquitto/data:/mosquitto/data
+      - /mnt/containers/mosquitto/log:/mosquitto/log
+      #- /mnt/containers/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      #- /mnt/containers/mosquitto/data/passwords.txt:/mosquitto/data/passwords.txt
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+    restart: unless-stopped
+    networks:
+      - single-node_default
+
+  wazuh-agent:
+    image: wazuh/wazuh-agent:4.4.0
+    container_name: wazuh-agent
+    environment:
+      - WAZUH_MANAGER='172.18.0.4'
+    volumes:
+      - wazuh-agent-data:/var/ossec/data
+    command: ["-f", "-dd", "-d", "-i", "0.0.0.0"]
+    networks:
+      - single-node_default
+
+networks:
+  single-node_default:
+    external: true
+
+volumes:
+  wazuh-agent-data:
+
