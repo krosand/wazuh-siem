@@ -33,7 +33,7 @@ services:
       - wazuh-agent-data:/var/ossec/data
     networks:
       - single-node_default
-    command: bash -c "apt-get update && apt-get install -y wget sudo && \
+    command: bash -c "apt-get update && apt-get install -y wget sudo lsb-release && \
       wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.8.0-1_amd64.deb && \
       sudo WAZUH_MANAGER='172.18.0.4' WAZUH_AGENT_GROUP='default' WAZUH_AGENT_NAME='mosquitto' dpkg -i ./wazuh-agent_4.8.0-1_amd64.deb && \
       /var/ossec/bin/wazuh-control start && \
@@ -45,4 +45,3 @@ networks:
 
 volumes:
   wazuh-agent-data:
-
