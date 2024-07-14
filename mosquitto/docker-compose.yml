@@ -23,15 +23,21 @@ services:
       - single-node_default
 
   wazuh-agent:
-    image: wazuh/wazuh-agent:4.4.0
+    image: debian:latest
     container_name: wazuh-agent
     environment:
       - WAZUH_MANAGER='172.18.0.4'
+      - WAZUH_AGENT_GROUP='default'
+      - WAZUH_AGENT_NAME='mosquitto'
     volumes:
       - wazuh-agent-data:/var/ossec/data
-    command: ["-f", "-dd", "-d", "-i", "0.0.0.0"]
     networks:
       - single-node_default
+    command: bash -c "apt-get update && apt-get install -y wget sudo && \
+      wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.8.0-1_arm64.deb && \
+      sudo WAZUH_MANAGER='172.18.0.4' WAZUH_AGENT_GROUP='default' WAZUH_AGENT_NAME='mosquitto' dpkg -i ./wazuh-agent_4.8.0-1_arm64.deb && \
+      /var/ossec/bin/wazuh-control start && \
+      tail -f /var/ossec/logs/ossec.log"
 
 networks:
   single-node_default:
