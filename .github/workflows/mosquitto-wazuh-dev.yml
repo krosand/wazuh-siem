@@ -36,5 +36,5 @@ jobs:
       - name: Deploy to Dev Environment
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/mosquitto-wazuh:dev
-          docker run -d --name mosquitto-wazuh-dev -e WAZUH_MANAGER='172.18.0.2' -p 1883:1883 ${{ secrets.DOCKER_USERNAME }}/mosquitto-wazuh:dev
+          docker-compose --env-file .env.dev up -d
 
