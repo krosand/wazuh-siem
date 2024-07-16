@@ -1,26 +1,22 @@
-version: '3'
+version: '3.8'
+
 services:
-  mosquitto-prod:
+  mosquitto-wazuh:
     image: krosand/mosquitto-wazuh:latest
-    container_name: mosquitto-prod
+    environment:
+      - WAZUH_MANAGER=${WAZUH_MANAGER}
     ports:
       - "1883:1883"
       - "8883:8883"
       - "9001:9001"
-    environment:
-      - WAZUH_MANAGER='172.18.0.4'
-      - WAZUH_AGENT_GROUP='default'
-      - WAZUH_AGENT_NAME='mosquitto'
-    volumes:
-      - /mnt/containers/mosquitto/config:/mosquitto/config
-      - /mnt/containers/mosquitto/data:/mosquitto/data
-      - /mnt/containers/mosquitto/log:/mosquitto/log
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
     restart: unless-stopped
-    networks:
-      - single-node_default
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_config:/mosquitto/config
 
+volumes:
+  mosquitto_data:
+  mosquitto_config:
 networks:
-  single-node_default:
+  reverseproxy-nw:
     external: true
