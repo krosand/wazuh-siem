@@ -28,7 +28,8 @@ jobs:
       - name: Build and Push Docker Image for Dev
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./mosquitto
+          file: ./mosquitto/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/mosquitto-wazuh:dev
 
