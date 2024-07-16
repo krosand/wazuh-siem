@@ -36,5 +36,5 @@ jobs:
       - name: Deploy to Production Environment
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/mosquitto-wazuh:latest
-          docker run -d --name mosquitto-wazuh-prod -e WAZUH_MANAGER='172.18.0.2' -p 1883:1883 ${{ secrets.DOCKER_USERNAME }}/mosquitto-wazuh:latest
+          docker-compose --env-file .env.prod up -d
 
